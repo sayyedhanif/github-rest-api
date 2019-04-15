@@ -1,0 +1,22 @@
+{
+  "name": "github-rest-api-test",
+  "version": "1.0.0",
+  "description": "test api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sayyedhanif/github-rest-api-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sayyedhanif/github-rest-api-test/issues"
+  },
+  "homepage": "https://github.com/sayyedhanif/github-rest-api-test#readme",
+  "dependencies": {
+    "hapi": "^18.1.0"
+  }
+}
