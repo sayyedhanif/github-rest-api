@@ -1,12 +1,21 @@
 'use strict';
 
 const Hapi = require('hapi');
+const routes = require('hapi-auto-routes');
+
 
 const init = async () => {
 
     const server = Hapi.server({
-        port: 3000,
-        host: 'localhost'
+        port: 3030,
+        host: 'localhost',
+        routes: {
+            cors: true,
+          },
+    });
+
+    routes.bind(server).register({
+        pattern: `${__dirname}/routes/**/*.js`,
     });
 
     await server.start();
