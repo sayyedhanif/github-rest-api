@@ -1,58 +1,33 @@
 const joi = require('joi');
-var request = require('request');
+const User = require('../Services/User')
 
-
-const test = {
-    path: '/api/v1/user',
+const me = {
+    path: '/api/v1/user/me',
     method: 'GET',
     config: {
-      description: 'User Api',
+      description: 'Get personal detail',
       tags: ['api', 'user'],
-      
-      handler(req, h) {
-          console.log('inside test api')
-
-          return new Promise(async (resolve, reject) => {
-            request({
-                // method: 'GET',
-                url: 'https://api.github.com/user',
-                auth : {
-                    user: 'sayyedhanif',
-                    pass: '4e84f6e74353e220701cea9790ef830832ca8552'
-                },
-                headers: {
-                    "Accept" : "application/vnd.github.inertia-preview+json",
-                    "Content-Type": 'application/json',
-                    'user-agent': 'node.js'
-                }
-               
-                
-              },
-              function (error, response, body) {
-                if (error) {
-                  console.log(' request failed:', error);
-                  reject({ success: false, message :error , data: {}});
-                }
-                console.log('request successful!  Server responded with:', body);
-                if (body && typeof body === 'string'){
-                    try {
-                        body = JSON.parse(body)
-                    } catch (err) {
-                      reject({ success: false, message :'Internal server error!' , data: {}});
-                    }
-                }
-                resolve({ success: true, message :'user data return successfully!' , data: body});
-              })
-
-          })
-          
-
+      validate: {
+				headers: joi.object({
+					"token": joi.string().required(),
+					"username": joi.string().required(),
+				}).unknown(),
+			},
+      handler: async (request, h) => {
+				if (request.headers && !request.headers.token) {
+					return h.response({ message: 'Token are not Privided!', result: {}, statusCode: 400 }).code(400);
+				}	
+				try {
+					const data = await User.getMe(request.headers.token, request.headers.username);
+					return h.response(data).code(data.statusCode);
+				} catch (error) {
+					return h.response({ message: error.message, result: {}, statusCode: error.statusCode }).code(error.statusCode);
+				}
           
       },
     },
   };
 
-
   module.exports = [
-      test
+    me
   ]

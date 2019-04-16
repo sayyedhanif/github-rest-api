@@ -1,19 +1,66 @@
 const joi = require('joi');
-const test = {
-    path: '/api/v1/test',
+const Repository = require('../Services/Repository')
+
+const getRepos = {
+    path: '/api/v1/user/repositories',
     method: 'GET',
     config: {
-      description: 'TEST Api',
-      tags: ['api', 'test'],
-      
-      handler(request, h) {
-          console.log('inside test api')
-          return { success: true, message :'api inegrated!' };
+      description: 'List your repositories',
+      tags: ['api', 'user'],
+      validate: {
+				headers: joi.object({
+					"token": joi.string().required(),
+					"username": joi.string().required(),
+				}).unknown(),
+			},
+      handler: async (request, h) => {
+				if (request.headers && !request.headers.token) {
+					return h.response({ message: 'Token are not Privided!', result: {}, statusCode: 400 }).code(400);
+				}	
+        try {
+					const data = await Repository.getRepos(request.headers.token, request.headers.username);
+					return h.response(data).code(data.statusCode);
+				} catch (error) {
+					return h.response({ message: error.message, result: {}, statusCode: error.statusCode }).code(error.statusCode);
+				} 
+      },
+    },
+	};
+	
+	const createRepo = {
+    path: '/api/v1/user/repositories',
+    method: 'POST',
+    config: {
+      description: 'Create user repositories',
+      tags: ['api', 'user'],
+      validate: {
+				payload: {
+					name: joi.string().required(),
+					description: joi.string().optional(),
+					homepage: joi.string().optional(),
+					private: joi.boolean().optional(),
+					auto_init: joi.boolean().optional(),
+				},
+				headers: joi.object({
+					"token": joi.string().required(),
+					"username": joi.string().required(),
+				}).unknown(),
+			},
+      handler: async (request, h) => {
+				if (request.headers && !request.headers.token) {
+					return h.response({ message: 'Token are not Privided!', result: {}, statusCode: 400 }).code(400);
+				}			
+        try {
+					const data = await Repository.createRepo(request.payload,request.headers.token, request.headers.username);
+					return h.response(data).code(data.statusCode);
+				} catch (error) {
+					return h.response({ message: error.message, result: {}, statusCode: error.statusCode }).code(error.statusCode);
+				} 
       },
     },
   };
 
-
   module.exports = [
-      test
+		getRepos,
+		createRepo
   ]
