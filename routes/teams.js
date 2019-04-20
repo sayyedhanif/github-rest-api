@@ -151,10 +151,45 @@ const addTeamMembers = {
 	},
 };
 
+const addTeamsRepo = {
+    path: '/api/v1/teams/{id}/repositories/add',
+    method: 'PUT',
+    config: {
+      description: 'Add or update team repository',
+      tags: ['api', 'user'],
+      validate: {
+				payload: {
+					repo_name: joi.string().required(),
+					repo_owner: joi.string().required(),
+					permission: joi.string().required(),
+				},
+				headers: joi.object({
+					"token": joi.string().required(),
+					"username": joi.string().required(),
+				}).unknown(),
+				params: {
+					id: joi.string().required()
+				}
+			},
+      handler: async (request, h) => {
+				if (request.headers && !request.headers.token) {
+					return h.response({ message: 'Token are not Privided!', result: {}, statusCode: 400 }).code(400);
+				}			
+        try {
+					const data = await Teams.addTeamsRepo(request.payload,request.headers, request.params);
+					return h.response(data).code(data.statusCode);
+				} catch (error) {
+					return h.response({ message: error.message, result: {}, statusCode: error.statusCode }).code(error.statusCode);
+				} 
+      },
+    },
+  };
+
 module.exports = [
 	getOrgTeams,
 	createTeam,
 	getUserTeams,
 	listTeamMembers,
-	addTeamMembers
+	addTeamMembers,
+	addTeamsRepo
 ]

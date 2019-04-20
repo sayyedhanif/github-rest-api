@@ -22,14 +22,15 @@ class Teams {
 					console.log(' request failed:', error);
 					reject({ success: false, message :error , data: {}, statusCode: 500});
 				}
-				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
-					if (body && typeof body === 'string'){
-						try {
-							body = JSON.parse(body)
-						} catch (err) {
-							reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
-						}
+				if (body && typeof body === 'string'){
+					try {
+						body = JSON.parse(body)
+					} catch (err) {
+						reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
 					}
+				}
+				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+					
 					resolve({ success: true, message :'Org teams return successfully!' , data: body, statusCode: 200});
 				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
 					reject({ success: false, message :'Internal server error!' , data: {}, statusCode : response.statusCode} );
@@ -61,14 +62,15 @@ class Teams {
 					console.log(' request failed:', error);
 					reject({ success: false, message :error , data: {}, statusCode: 500});
 				}
-				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
-					if (body && typeof body === 'string'){
-						try {
-							body = JSON.parse(body)
-						} catch (err) {
-							reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
-						}
+				if (body && typeof body === 'string'){
+					try {
+						body = JSON.parse(body)
+					} catch (err) {
+						reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
 					}
+				}
+				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+					
 					resolve({ success: true, message :'Org team created successfully!' , data: body, statusCode: 201});
 				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
 					reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
@@ -103,14 +105,15 @@ class Teams {
 					console.log(' request failed:', error);
 					reject({ success: false, message :error , data: {}, statusCode: 500});
 				}
-				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
-					if (body && typeof body === 'string'){
-						try {
-							body = JSON.parse(body)
-						} catch (err) {
-							reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
-						}
+				if (body && typeof body === 'string'){
+					try {
+						body = JSON.parse(body)
+					} catch (err) {
+						reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
 					}
+				}
+				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+					
 					resolve({ success: true, message :'Get user team!' , data: body, statusCode: 200});
 				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
 					reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
@@ -144,19 +147,20 @@ class Teams {
 					console.log(' request failed:', error);
 					reject({ success: false, message :error , data: {}, statusCode: 500});
 				}
-				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
-					if (body && typeof body === 'string'){
-						try {
-							body = JSON.parse(body)
-						} catch (err) {
-							reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
-						}
+				if (body && typeof body === 'string'){
+					try {
+						body = JSON.parse(body)
+					} catch (err) {
+						reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
 					}
+				}
+				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+					
 					resolve({ success: true, message :'Team members return successfully!' , data: body, statusCode: 200});
 				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
 					reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
 				} else {
-					reject({ success: false, message :'Internal server error!' , data: {}, statusCode: response.statusCode});
+					reject({ success: false, message :body.message , data: {}, statusCode: response.statusCode});
 				}            
 			})
 		});
@@ -183,7 +187,47 @@ class Teams {
 					console.log(' request failed:', error);
 					reject({ success: false, message :error , data: {}, statusCode: 500});
 				}
+				if (body && typeof body === 'string'){
+					try {
+						body = JSON.parse(body)
+					} catch (err) {
+						reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
+					}
+				}
 				if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+					
+					resolve({ success: true, message :'Team members added successfully!' , data: body, statusCode: 200});
+				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
+					reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
+				} else {
+					reject({ success: false, message :body.message , data: {}, statusCode: response.statusCode});
+				}            
+			})
+		});
+	}
+	static addTeamsRepo(payload,headers,params) {
+		return new Promise(async (resolve, reject) => {
+				request({
+					method: 'PUT',
+					url: `https://api.github.com/teams/${params.id}/repos/${payload.repo_owner}/${payload.repo_name}`,
+					auth : {
+						user: headers.username,
+						pass: headers.token
+					},
+					json: {
+						permission: payload.permission
+					},
+					headers: {
+						"Accept" : "application/vnd.github.hellcat-preview+json",
+						"Content-Type": 'application/json',
+						'user-agent': 'node.js'
+					}	
+				}, function (error, response, body) {
+					console.log(error,  body)
+					if (error) {
+						console.log(' request failed:', error);
+						reject({ success: false, message :error , data: {}, statusCode: 500});
+					}
 					if (body && typeof body === 'string'){
 						try {
 							body = JSON.parse(body)
@@ -191,15 +235,17 @@ class Teams {
 							reject({ success: false, message :'Internal server error!' , data: {}, code : response.statusCode});
 						}
 					}
-					resolve({ success: true, message :'Team members added successfully!' , data: body, statusCode: 200});
-				} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
-					reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
-				} else {
-					reject({ success: false, message :'Internal server error!' , data: {}, statusCode: response.statusCode});
-				}            
-			})
-		});
-	}
+					if(response.statusCode && response.statusCode >=200 && response.statusCode < 400){
+						
+						resolve({ success: true, message :'user repositories created successfully!' , data: body, statusCode: 201});
+					} else if(response.statusCode && response.statusCode == 401 || response.statusCode == 403){
+						reject({ success: false, message :'Authenticaion error!' , data: {}, statusCode : response.statusCode} );
+					} else {
+						reject({ success: false, message :body.message , data: {}, statusCode: response.statusCode});
+					}            
+				})
+			});
+	  }
 }
 
 module.exports = Teams;
