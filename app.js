@@ -9,7 +9,7 @@ const hapiSwagger = require('hapi-swagger');
 const init = async () => {
 
 	const server = Hapi.server({
-		port: 3030,
+		port: 3031,
 		host: 'localhost',
 		routes: {
 			cors: true,
